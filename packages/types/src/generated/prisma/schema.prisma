@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator types {
+  provider = "prisma-client-js"
+  output   = "../../../packages/types/src/generated/prisma" // путь к @repo/types
+  // optionally: previewFeatures = ["clientExtensions"] 
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id String @id @default(uuid())
+
+  title   String
+  content String
+  tags    String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

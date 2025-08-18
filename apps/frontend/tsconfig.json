@@ -1,0 +1,15 @@
+{
+  "extends": "@repo/typescript-config/next.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "noEmit": true
+  },
+  "include": [
+    "../../packages/typescript-config/**/*.ts",
+    "../../packages/typescript-config/**/*.tsx",
+    "../../packages/typescript-config/next-env.d.ts",
+    "../../packages/typescript-config/next.config.js",
+    "../../packages/typescript-config/.next/types/**/*.ts",
+    ".next/types/**/*.ts"
+  ]
+}
