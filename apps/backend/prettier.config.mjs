@@ -1,11 +1,15 @@
-import nest from "@repo/prettier-config/nest";
-
 /**
  * @type {import("prettier").Config}
  */
+
 const config = {
-  ...nest,
-};
+	singleQuote: false,
+	trailingComma: "none",
+	semi: false,
+	printWidth: 120,
+	useTabs: true,
+	tabWidth: 2,
+	arrowParens: "avoid"
+}
 
-export default config;
-
+export default config

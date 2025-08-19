@@ -25,8 +25,6 @@ export class GqlJwtAuthGuard implements CanActivate {
 		}
 
 		try {
-			console.log(process.env.JWT_SECRET)
-			console.log(token)
 			this.jwtService.verify(token, { secret: process.env.JWT_SECRET })
 			return true
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars

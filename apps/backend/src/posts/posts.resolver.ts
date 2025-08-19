@@ -26,11 +26,13 @@ export class PostsResolver {
 		return this.service.create(data)
 	}
 
+	@UseGuards(GqlJwtAuthGuard)
 	@Mutation(() => Post)
 	updatePost(@Args("id") id: string, @Args("data") data: UpdatePostInput) {
 		return this.service.update(id, data)
 	}
 
+	@UseGuards(GqlJwtAuthGuard)
 	@Mutation(() => Boolean)
 	deletePost(@Args("id") id: string) {
 		return this.service.delete(id)
