@@ -1,28 +1,28 @@
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "./prisma/prisma.module"
-import { JwtModule } from "@nestjs/jwt"
-import { AuthService } from "./auth/auth.service"
-import { JwtAuthGuard } from "./guards/auth.guard"
 import { GraphQLModule } from "@nestjs/graphql"
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
 import { join } from "path"
 import { PostsModule } from "./posts/posts.module"
+import { JwtModule } from "@nestjs/jwt"
+import { Request } from "express"
+import { AuthModule } from "./auth/auth.module"
 
 @Module({
 	imports: [
-		PrismaModule,
 		JwtModule.register({
 			secret: process.env.JWT_SECRET,
 			signOptions: { expiresIn: "1h" }
 		}),
+		AuthModule,
+		PrismaModule,
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
 			autoSchemaFile: join(process.cwd(), "src/schema.graphql"), // схема будет генериться автоматически
-			sortSchema: true
+			sortSchema: true,
+			context: ({ req }: { req: Request }) => ({ req })
 		}),
 		PostsModule
-	],
-	providers: [AuthService, JwtAuthGuard],
-	exports: [JwtAuthGuard]
+	]
 })
 export class AppModule {}

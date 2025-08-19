@@ -3,6 +3,8 @@ import { Post } from "./posts.model"
 import { PostsService } from "./posts.service"
 import { CreatePostInput } from "./create-post.input"
 import { UpdatePostInput } from "./update-post.input"
+import { UseGuards } from "@nestjs/common"
+import { GqlJwtAuthGuard } from "../guards/auth.gql.guard"
 
 @Resolver(() => Post)
 export class PostsResolver {
@@ -18,6 +20,7 @@ export class PostsResolver {
 		return this.service.findOne(id)
 	}
 
+	@UseGuards(GqlJwtAuthGuard)
 	@Mutation(() => Post)
 	createPost(@Args("data") data: CreatePostInput) {
 		return this.service.create(data)
