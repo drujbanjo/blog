@@ -18,7 +18,7 @@ import { AuthModule } from "./auth/auth.module"
 		PrismaModule,
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
-			autoSchemaFile: join(process.cwd(), "src/schema.graphql"), // схема будет генериться автоматически
+			autoSchemaFile: join(process.cwd(), "src/schema.graphql"),
 			sortSchema: true,
 			context: ({ req }: { req: Request }) => ({ req })
 		}),

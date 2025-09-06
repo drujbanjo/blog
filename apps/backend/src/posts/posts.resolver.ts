@@ -11,8 +11,8 @@ export class PostsResolver {
 	constructor(private service: PostsService) {}
 
 	@Query(() => [Post])
-	posts() {
-		return this.service.findAll()
+	posts(@Args("query", { type: () => String, nullable: true }) query?: string) {
+		return this.service.findAll(query)
 	}
 
 	@Query(() => Post, { nullable: true })

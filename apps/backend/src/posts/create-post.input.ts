@@ -6,6 +6,9 @@ export class CreatePostInput {
 	title: string
 
 	@Field()
+	description: string
+
+	@Field()
 	content: string
 
 	@Field(() => [String])

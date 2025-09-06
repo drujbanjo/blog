@@ -1,12 +1,11 @@
-/* eslint-disable import/order */
 import js from "@eslint/js"
-import importPlugin from "eslint-plugin-import"
-import * as tseslint from "typescript-eslint"
-import unusedImports from "eslint-plugin-unused-imports"
+import next from "@next/eslint-plugin-next"
 import prettier from "eslint-config-prettier"
+import importPlugin from "eslint-plugin-import"
 import react from "eslint-plugin-react"
 import reactHooks from "eslint-plugin-react-hooks"
-import next from "@next/eslint-plugin-next"
+import unusedImports from "eslint-plugin-unused-imports"
+import * as tseslint from "typescript-eslint"
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
@@ -15,7 +14,7 @@ export default [
 	...tseslint.configs.recommended,
 	{
 		files: ["src/**/*.ts", "src/**/*.tsx"],
-		...tseslint.configs.recommendedTypeChecked[0], // первый объект из массива
+		...tseslint.configs.recommendedTypeChecked[0],
 		languageOptions: {
 			parser: tseslint.parser,
 			parserOptions: {

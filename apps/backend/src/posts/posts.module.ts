@@ -8,7 +8,6 @@ import { GqlJwtAuthGuard } from "../guards/auth.gql.guard"
 @Module({
 	imports: [
 		JwtModule.register({
-			// можно использовать register или registerAsync, если хочешь брать секрет из env
 			secret: process.env.JWT_SECRET,
 			signOptions: { expiresIn: "1h" }
 		})

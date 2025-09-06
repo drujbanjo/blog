@@ -4,8 +4,7 @@ generator client {
 
 generator types {
   provider = "prisma-client-js"
-  output   = "../../../packages/types/src/generated/prisma" // путь к @repo/types
-  // optionally: previewFeatures = ["clientExtensions"] 
+  output   = "../../../packages/types/src/generated/prisma"
 }
 
 datasource db {
@@ -16,9 +15,10 @@ datasource db {
 model Post {
   id String @id @default(uuid())
 
-  title   String
-  content String
-  tags    String[]
+  title       String
+  description String
+  content     String
+  tags        String[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

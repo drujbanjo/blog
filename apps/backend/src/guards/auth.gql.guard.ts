@@ -1,4 +1,3 @@
-// guards/auth.gql.guard.ts
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 import { GqlExecutionContext } from "@nestjs/graphql"
@@ -16,7 +15,6 @@ export class GqlJwtAuthGuard implements CanActivate {
 			throw new UnauthorizedException("Request not found in GraphQL context")
 		}
 
-		// безопасно получить заголовок
 		const authHeader = (req.headers.authorization as string) || ""
 		const token = authHeader.replace(/^Bearer\s+/i, "")
 

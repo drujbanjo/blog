@@ -6,6 +6,9 @@ export class UpdatePostInput {
 	title?: string
 
 	@Field({ nullable: true })
+	description?: string
+
+	@Field({ nullable: true })
 	content?: string
 
 	@Field(() => [String], { nullable: true })

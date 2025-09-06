@@ -6,6 +6,9 @@ export class Post {
 	id: string
 
 	@Field()
+	description: string
+
+	@Field()
 	title: string
 
 	@Field()

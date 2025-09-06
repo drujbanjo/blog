@@ -7,8 +7,21 @@ import { UpdatePostInput } from "./update-post.input"
 export class PostsService {
 	constructor(private prisma: PrismaService) {}
 
-	findAll() {
-		return this.prisma.post.findMany()
+	async findAll(query?: string) {
+		if (!query) {
+			return this.prisma.post.findMany()
+		}
+
+		return this.prisma.post.findMany({
+			where: {
+				OR: [
+					{ title: { contains: query, mode: "insensitive" } },
+					{ description: { contains: query, mode: "insensitive" } },
+					{ content: { contains: query, mode: "insensitive" } },
+					{ tags: { has: query } } // ищет точное совпадение строки в массиве
+				]
+			}
+		})
 	}
 
 	findOne(id: string) {

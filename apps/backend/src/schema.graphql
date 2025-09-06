@@ -4,6 +4,7 @@
 
 input CreatePostInput {
   content: String!
+  description: String!
   tags: [String!]!
   title: String!
 }
@@ -23,6 +24,7 @@ type Mutation {
 type Post {
   content: String!
   createdAt: DateTime!
+  description: String!
   id: String!
   tags: [String!]!
   title: String!
@@ -31,11 +33,12 @@ type Post {
 
 type Query {
   post(id: String!): Post
-  posts: [Post!]!
+  posts(query: String): [Post!]!
 }
 
 input UpdatePostInput {
   content: String
+  description: String
   tags: [String!]
   title: String
 }
