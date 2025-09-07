@@ -1,10 +1,15 @@
 {
 	"name": "backend",
 	"version": "0.0.1",
+	"homepage": "https://github.com/drujbanjo/blog#readme",
 	"description": "",
-	"author": "",
+	"author": "drujban <drujbanjo@gmail.com> (htts://github.com/drujbanjo)",
 	"private": true,
-	"license": "UNLICENSED",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/drujbanjo/blog/issues",
+		"email": "drujbanjo@gmail.com"
+	},
 	"scripts": {
 		"build": "nest build",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -18,7 +23,7 @@
 		"test:cov": "jest --coverage",
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
-		"codegen": "graphql-codegen --config ../../codegen.yml"
+		"vercel-build": "bun run build"
 	},
 	"dependencies": {
 		"@nestjs/apollo": "^13.1.0",
@@ -39,8 +44,6 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.33.0",
-		"@graphql-codegen/cli": "^5.0.7",
-		"@graphql-codegen/typescript": "^4.1.6",
 		"@graphql-codegen/typescript-resolvers": "^4.5.1",
 		"@nestjs/cli": "^11.0.0",
 		"@nestjs/schematics": "^11.0.0",
