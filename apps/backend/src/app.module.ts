@@ -21,6 +21,7 @@ import { AuthModule } from "./auth/auth.module"
 			// autoSchemaFile: join(process.cwd(), "src/schema.graphql"),
 			autoSchemaFile: true,
 			sortSchema: true,
+			path: "/graphql",
 			context: ({ req }: { req: Request }) => ({ req })
 		}),
 		PostsModule

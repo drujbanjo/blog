@@ -17,15 +17,14 @@ if (!global.prisma) {
 	})
 }
 
+// Инициализация Nest
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
 	app.enableCors()
 	await app.init()
 }
 
-bootstrap().catch(err => {
-	console.error("Bootstrap failed:", err)
-})
+bootstrap().catch(err => console.error(err))
 
-// CommonJS export для Vercel
+// ✅ serverless принимает объект Express, а не промис
 module.exports = serverless(server)
