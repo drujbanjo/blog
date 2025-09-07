@@ -7,15 +7,15 @@ import { PrismaClient } from "@prisma/client"
 
 const server = express()
 
+// Prisma singleton
 declare global {
 	var prisma: PrismaClient
 }
-export const prisma =
-	global.prisma ||
-	new PrismaClient({
+if (!global.prisma) {
+	global.prisma = new PrismaClient({
 		log: ["query", "info", "warn", "error"]
 	})
-if (process.env.NODE_ENV !== "production") global.prisma = prisma
+}
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
@@ -27,4 +27,5 @@ bootstrap().catch(err => {
 	console.error("Bootstrap failed:", err)
 })
 
-export const handler = serverless(server)
+// CommonJS export для Vercel
+module.exports = serverless(server)
