@@ -1,12 +1,11 @@
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "./prisma/prisma.module"
 import { GraphQLModule } from "@nestjs/graphql"
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
-// import { join } from "path"
 import { PostsModule } from "./posts/posts.module"
+import { PrismaModule } from "./prisma/prisma.module"
+import { AuthModule } from "./auth/auth.module"
 import { JwtModule } from "@nestjs/jwt"
 import { Request } from "express"
-import { AuthModule } from "./auth/auth.module"
 
 @Module({
 	imports: [
@@ -16,15 +15,14 @@ import { AuthModule } from "./auth/auth.module"
 		}),
 		AuthModule,
 		PrismaModule,
+		PostsModule,
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
-			// autoSchemaFile: join(process.cwd(), "src/schema.graphql"),
-			autoSchemaFile: true,
-			sortSchema: true,
-			path: "/graphql",
+			autoSchemaFile: true, // генерируем схему на лету
+			path: "/graphql", // endpoint GraphQL
+			playground: true, // включить GraphQL Playground
 			context: ({ req }: { req: Request }) => ({ req })
-		}),
-		PostsModule
+		})
 	]
 })
 export class AppModule {}

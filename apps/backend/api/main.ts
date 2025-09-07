@@ -7,7 +7,7 @@ import { PrismaClient } from "@prisma/client"
 
 const server = express()
 
-// Prisma singleton
+// Prisma singleton для serverless
 declare global {
 	var prisma: PrismaClient
 }
@@ -24,7 +24,7 @@ async function bootstrap() {
 	await app.init()
 }
 
-bootstrap().catch(err => console.error(err))
+bootstrap().catch(err => console.error("Bootstrap failed:", err))
 
-// ✅ serverless принимает объект Express, а не промис
+// Default export для Vercel
 module.exports = serverless(server)
