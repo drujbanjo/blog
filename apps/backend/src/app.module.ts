@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "./prisma/prisma.module"
 import { GraphQLModule } from "@nestjs/graphql"
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
-import { join } from "path"
+// import { join } from "path"
 import { PostsModule } from "./posts/posts.module"
 import { JwtModule } from "@nestjs/jwt"
 import { Request } from "express"
@@ -18,7 +18,8 @@ import { AuthModule } from "./auth/auth.module"
 		PrismaModule,
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
-			autoSchemaFile: join(process.cwd(), "src/schema.graphql"),
+			// autoSchemaFile: join(process.cwd(), "src/schema.graphql"),
+			autoSchemaFile: true,
 			sortSchema: true,
 			context: ({ req }: { req: Request }) => ({ req })
 		}),

@@ -10,10 +10,12 @@ const server = express()
 declare global {
 	var prisma: PrismaClient
 }
-
-if (!global.prisma) {
-	global.prisma = new PrismaClient()
-}
+export const prisma =
+	global.prisma ||
+	new PrismaClient({
+		log: ["query", "info", "warn", "error"]
+	})
+if (process.env.NODE_ENV !== "production") global.prisma = prisma
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
@@ -21,6 +23,8 @@ async function bootstrap() {
 	await app.init()
 }
 
-bootstrap()
+bootstrap().catch(err => {
+	console.error("Bootstrap failed:", err)
+})
 
 export const handler = serverless(server)
