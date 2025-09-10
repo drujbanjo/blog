@@ -1,0 +1,23 @@
+query GetPosts {
+	posts {
+		id
+		title
+		description
+		content
+		tags
+		createdAt
+		updatedAt
+	}
+}
+
+query GetPost($id: String!) {
+	post(id: $id) {
+		id
+		title
+		description
+		content
+		tags
+		createdAt
+		updatedAt
+	}
+}

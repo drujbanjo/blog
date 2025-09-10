@@ -1,0 +1,14 @@
+schema: "http://localhost:4200/graphql"
+documents: "src/graphql/**/*.graphql" # только .graphql, не ts
+generates:
+  src/queries/:
+    preset: client
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true
+      withHOC: false
+      withComponent: false
+      avoidOptionals: true

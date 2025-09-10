@@ -1,12 +1,11 @@
 "use client"
 
 import { useQuery } from "@apollo/client"
-import { Post } from "@repo/types"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 
 import { Badge, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input } from "@/components"
-import { GET_POSTS } from "@/graphql"
+import { GET_POSTS } from "@/queries"
 
 const Home = () => {
 	const { data, loading, error } = useQuery(GET_POSTS)
