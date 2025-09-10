@@ -2,7 +2,7 @@
 	"name": "backend",
 	"version": "0.0.1",
 	"homepage": "https://github.com/drujbanjo/blog#readme",
-	"description": "",
+	"description": "Api for my blog created with Nestjs, Prisma and Graphql",
 	"author": "drujban <drujbanjo@gmail.com> (htts://github.com/drujbanjo)",
 	"private": true,
 	"license": "MIT",
@@ -12,12 +12,13 @@
 	},
 	"scripts": {
 		"build": "nest build",
-		"format": "prettier --write \"src/**/*.ts\"",
 		"start": "nest start",
 		"dev": "nest start --watch",
 		"debug": "nest start --debug --watch",
 		"prod": "node dist/main",
-		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+		"format": "prettier --write \"{src,api}/**/*.{ts,js}\"",
+		"format:check": "prettier --check \"{src,api}/**/*.{ts,js}\"",
+		"lint": "eslint \"{src,apps,libs,test}/**/*.{ts,js}\" --fix",
 		"vercel-build": "prisma generate && nest build"
 	},
 	"dependencies": {
