@@ -7,19 +7,16 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  backend:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: apps/backend
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
