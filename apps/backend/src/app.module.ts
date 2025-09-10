@@ -6,6 +6,7 @@ import { PrismaModule } from "./prisma/prisma.module"
 import { AuthModule } from "./auth/auth.module"
 import { JwtModule } from "@nestjs/jwt"
 import { Request } from "express"
+import { AppController } from "./app.controller"
 
 @Module({
 	imports: [
@@ -23,6 +24,7 @@ import { Request } from "express"
 			playground: true, // включить GraphQL Playground
 			context: ({ req }: { req: Request }) => ({ req })
 		})
-	]
+	],
+	controllers: [AppController]
 })
 export class AppModule {}
