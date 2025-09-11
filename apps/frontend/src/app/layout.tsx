@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { Container, Header } from "@/components"
+import { Header } from "@/components"
 import { inter, jetBrains } from "@/lib"
 import { Providers } from "@/providers"
 import "@/styles/main.css"
@@ -17,12 +17,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={`${inter.className} ${jetBrains.variable} dark antialiased`}>
+			<body className={`${inter.className} ${jetBrains.variable} antialiased`}>
 				<Providers>
 					<Header />
-					<main className="mt-12">
-						<Container>{children}</Container>
-					</main>
+					<main className="mt-12">{children}</main>
 				</Providers>
 			</body>
 		</html>

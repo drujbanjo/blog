@@ -1,14 +1,23 @@
 "use client"
 
-import { useQuery } from "@apollo/client"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 
-import { Badge, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input } from "@/components"
-import { GET_POSTS } from "@/queries"
+import {
+	Badge,
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+	Container,
+	Input
+} from "@/components"
+import { Post, useGetPostsQuery } from "@/graphql"
 
 const Home = () => {
-	const { data, loading, error } = useQuery(GET_POSTS)
+	const { data, loading, error } = useGetPostsQuery()
 	const [search, setSearch] = useState("")
 
 	const posts = useMemo(() => {
@@ -23,23 +32,26 @@ const Home = () => {
 		)
 	}, [data, search])
 
-	if (loading) return <p>Загрузка...</p>
-	if (error) return <p>Ошибка: {error.message}</p>
-
 	return (
-		<>
+		<Container size={"lg"}>
 			<Input
 				value={search}
 				onChange={e => setSearch(e.target.value)}
 				placeholder="Search..."
 				className="mb-4 max-w-2xl"
 			/>
-			<ul className="grid grid-cols-3 gap-4">
-				{posts.map((post: Post) => (
-					<Item key={post.id} post={post} />
-				))}
-			</ul>
-		</>
+			{loading ? (
+				<p>Загрузка...</p>
+			) : error ? (
+				<p>Ошибка: {error.message}</p>
+			) : (
+				<ul className="grid grid-cols-3 gap-4">
+					{posts.map((post: Post) => (
+						<Item key={post.id} post={post} />
+					))}
+				</ul>
+			)}
+		</Container>
 	)
 }
 

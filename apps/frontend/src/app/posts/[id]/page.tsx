@@ -1,70 +1,49 @@
 "use client"
 
-import { useQuery } from "@apollo/client"
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote"
-import { serialize } from "next-mdx-remote/serialize"
+import { useParams } from "next/navigation"
+import { MDXRemoteSerializeResult } from "next-mdx-remote"
 import React, { useEffect, useState } from "react"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { oneDark as baseTheme } from "react-syntax-highlighter/dist/cjs/styles/prism"
-import remarkGfm from "remark-gfm"
 
-import { GET_POST } from "@/graphql"
+import { Markdown, Badge, Container } from "@/components"
+import { useGetPostQuery } from "@/graphql"
+import { mdxSerialize } from "@/lib/mdx"
 
-// Catppuccin Mocha цвета (только токены)
-const catppuccinMocha = {
-	...baseTheme,
-	comment: { color: "#6c7086", fontStyle: "italic" },
-	keyword: { color: "#cba6f7" },
-	string: { color: "#a6e3a1" },
-	function: { color: "#89b4fa" },
-	number: { color: "#fab387" },
-	boolean: { color: "#f38ba8" },
-	operator: { color: "#94e2d5" },
-	variable: { color: "#f2cdcd" },
-	"class-name": { color: "#f9e2af" },
-	punctuation: { color: "#bac2de" }
-}
+const Page = () => {
+	const params = useParams() as { id: string }
 
-type Props = { params: { id: string } }
+	const { data, loading, error } = useGetPostQuery({
+		variables: { id: params.id }
+	})
 
-export default function Page({ params }: Props) {
-	const { id } = params
-	const { data } = useQuery(GET_POST, { variables: { id } })
 	const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null)
 
 	useEffect(() => {
 		if (data?.post?.content) {
-			serialize(data.post.content, { mdxOptions: { remarkPlugins: [remarkGfm] } }).then(res => setMdxSource(res))
+			mdxSerialize(data.post.content).then(res => setMdxSource(res))
 		}
 	}, [data])
 
-	if (!mdxSource) return <div>Loading...</div>
-
-	const components = {
-		code: ({ className, children, ...props }: any) => {
-			const code = String(children).trim()
-			if (!className) {
-				return <code className="rounded bg-neutral-200 px-1 py-0.5 font-mono text-sm dark:bg-neutral-800">{code}</code>
-			}
-			const language = className.replace("language-", "")
-			return (
-				<SyntaxHighlighter
-					language={language}
-					style={catppuccinMocha as any}
-					PreTag="pre"
-					showLineNumbers
-					wrapLongLines
-					{...props}
-				>
-					{code}
-				</SyntaxHighlighter>
-			)
-		}
-	}
-
 	return (
-		<div className="prose dark:prose-invert max-w-full p-4">
-			<MDXRemote {...mdxSource} components={components} />
-		</div>
+		<Container>
+			<div className="mb-4">
+				<h1 className="mb-2 text-5xl font-black">{data?.post?.title}</h1>
+				<ul className="align-center flex gap-2">
+					{data?.post?.tags?.map((tag, idx) => (
+						<Badge key={idx} variant="secondary">
+							{tag}
+						</Badge>
+					))}
+				</ul>
+			</div>
+			{loading || !mdxSource ? (
+				<p>Загрузка...</p>
+			) : error ? (
+				<p>Ошибка: {error.message}</p>
+			) : (
+				<Markdown mdx={mdxSource!} />
+			)}
+		</Container>
 	)
 }
+
+export default Page
