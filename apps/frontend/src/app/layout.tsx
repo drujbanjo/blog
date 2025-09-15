@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={`${inter.className} ${jetBrains.variable} antialiased`}>
+			<body className={`${inter.className} ${jetBrains.variable} scroll-smooth antialiased`}>
 				<Providers>
 					<Header />
 					<main className="mt-12">{children}</main>

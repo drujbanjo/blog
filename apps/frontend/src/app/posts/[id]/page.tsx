@@ -4,7 +4,7 @@ import { useParams } from "next/navigation"
 import { MDXRemoteSerializeResult } from "next-mdx-remote"
 import React, { useEffect, useState } from "react"
 
-import { Markdown, Badge, Container } from "@/components"
+import { Markdown, Badge, Container, Toc } from "@/components"
 import { useGetPostQuery } from "@/graphql"
 import { mdxSerialize } from "@/lib/mdx"
 
@@ -16,16 +16,22 @@ const Page = () => {
 	})
 
 	const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null)
+	const [toc, setToc] = useState<{ depth: number; value: string }[]>([])
 
 	useEffect(() => {
 		if (data?.post?.content) {
-			mdxSerialize(data.post.content).then(res => setMdxSource(res))
+			mdxSerialize(data.post.content).then(res => {
+				setMdxSource(res.mdx)
+				setToc(res.toc)
+			})
 		}
+
+		console.log(data)
 	}, [data])
 
 	return (
 		<Container>
-			<div className="mb-4">
+			<div className="mb-6">
 				<h1 className="mb-2 text-5xl font-black">{data?.post?.title}</h1>
 				<ul className="align-center flex gap-2">
 					{data?.post?.tags?.map((tag, idx) => (
@@ -35,13 +41,20 @@ const Page = () => {
 					))}
 				</ul>
 			</div>
-			{loading || !mdxSource ? (
-				<p>Загрузка...</p>
-			) : error ? (
-				<p>Ошибка: {error.message}</p>
-			) : (
-				<Markdown mdx={mdxSource!} />
-			)}
+			<div className="grid grid-cols-5 gap-10">
+				<div className="col-span-4">
+					{loading || !mdxSource ? (
+						<p>Загрузка...</p>
+					) : error ? (
+						<p>Ошибка: {error.message}</p>
+					) : (
+						<Markdown mdx={mdxSource!} />
+					)}
+				</div>
+				<div className="col-span-1">
+					<Toc toc={toc} />
+				</div>
+			</div>
 		</Container>
 	)
 }
