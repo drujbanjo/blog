@@ -2,7 +2,7 @@
 
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote"
 import Prism from "prismjs"
-import React, { ComponentProps, JSX, useEffect } from "react"
+import React, { ComponentProps, JSX, useEffect, useState } from "react"
 
 import "prismjs/components/prism-jsx"
 import "prismjs/components/prism-javascript"
@@ -28,6 +28,8 @@ import "@/styles/prism/catppuccin-latte.css"
 import "@/styles/prism/catppuccin-mocha.css"
 
 import { cn } from "@/lib"
+import { Button } from "./ui/button"
+import { Check, Copy } from "lucide-react"
 
 const styled =
 	<Tag extends keyof JSX.IntrinsicElements>(
@@ -44,6 +46,35 @@ const styled =
 
 type MarkdownProps = {
 	mdx: MDXRemoteSerializeResult
+}
+
+export const CodeBlock = ({ code, language, props }: { code: string; language: string; props?: any }) => {
+	const [copied, setCopied] = useState(false)
+
+	async function handleCopy() {
+		await navigator.clipboard.writeText(code)
+		setCopied(true)
+		setTimeout(() => setCopied(false), 2000)
+	}
+
+	return (
+		<div className="group relative mt-4">
+			<pre className={cn(`${language !== "bash" && "line-numbers"} overflow-x-auto rounded-md p-4 font-mono`)}>
+				{language === "bash" && <span className="pointer-events-none pl-2 select-none">$ </span>}
+				<code className={`language-${language} font-mono`} {...props}>
+					{code}
+				</code>
+			</pre>
+			<Button
+				size="sm"
+				variant="ghost"
+				className="absolute top-2 right-2 opacity-0 transition group-hover:opacity-100"
+				onClick={handleCopy}
+			>
+				{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+			</Button>
+		</div>
+	)
 }
 
 export const Markdown = ({ mdx }: MarkdownProps) => {
@@ -85,20 +116,12 @@ export const Markdown = ({ mdx }: MarkdownProps) => {
 		),
 
 		code: ({ className, children, ...props }: any) => {
-			const code = String(children).trim()
+			const raw = String(children).trim()
 			if (!className) {
-				return <code className="language-none rounded px-1 py-0.5 font-mono text-inherit">{code}</code>
+				return <code className="language-none rounded px-1 py-0.5 font-mono text-inherit">{raw}</code>
 			}
-
-			const language = className.replace("language-", "")
-			return (
-				<pre className={cn(`${language != "bash" && "line-numbers"} mt-4 overflow-x-auto rounded-md p-4 font-mono`)}>
-					{language == "bash" && <span className="pointer-events-none pl-2 select-none">$ </span>}
-					<code className={`language-${language} font-mono`} {...props}>
-						{code}
-					</code>
-				</pre>
-			)
+			const lang = className.replace("language-", "")
+			return <CodeBlock code={raw} language={lang} props={props} />
 		}
 	}
 
