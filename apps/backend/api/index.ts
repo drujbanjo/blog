@@ -1,18 +1,18 @@
 import { NestFactory } from "@nestjs/core"
 import { AppModule } from "../src/app.module"
-import { Request, Response } from "express"
+import { ExpressAdapter } from "@nestjs/platform-express"
+import express, { Request, Response } from "express"
 
-let cachedHandler: (req: Request, res: Response) => void
+let cachedApp: express.Express
 
 export default async function handler(req: Request, res: Response) {
-	if (!cachedHandler) {
-		const app = await NestFactory.create(AppModule)
+	if (!cachedApp) {
+		const server = express()
+		const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
 		app.enableCors()
 		await app.init()
-
-		const instance = app.getHttpAdapter().getInstance()
-		cachedHandler = instance as unknown as (req: Request, res: Response) => void
+		cachedApp = server
 	}
 
-	return cachedHandler(req, res)
+	return cachedApp(req, res)
 }
