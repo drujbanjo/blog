@@ -15,7 +15,7 @@ export class GqlJwtAuthGuard implements CanActivate {
 			throw new UnauthorizedException("Request not found in GraphQL context")
 		}
 
-		const authHeader = (req.headers.authorization as string) || ""
+		const authHeader = (req.headers.token as string) || ""
 		const token = authHeader.replace(/^Bearer\s+/i, "")
 
 		if (!token) {

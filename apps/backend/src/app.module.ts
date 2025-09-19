@@ -4,15 +4,10 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo"
 import { PostsModule } from "./posts/posts.module"
 import { PrismaModule } from "./prisma/prisma.module"
 import { AuthModule } from "./auth/auth.module"
-import { JwtModule } from "@nestjs/jwt"
 import { AppController } from "./app.controller"
 
 @Module({
 	imports: [
-		JwtModule.register({
-			secret: process.env.JWT_SECRET,
-			signOptions: { expiresIn: "1h" }
-		}),
 		AuthModule,
 		PrismaModule,
 		PostsModule,

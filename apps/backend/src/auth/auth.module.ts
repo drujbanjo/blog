@@ -7,7 +7,7 @@ import { AuthResolver } from "./auth.resolver"
 	imports: [
 		JwtModule.register({
 			secret: process.env.JWT_SECRET,
-			signOptions: { expiresIn: "1h" }
+			signOptions: { expiresIn: "12h" }
 		})
 	],
 	providers: [AuthService, AuthResolver],
