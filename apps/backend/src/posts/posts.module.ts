@@ -3,10 +3,10 @@ import { PostsService } from "./posts.service"
 import { PostsResolver } from "./posts.resolver"
 import { PrismaService } from "../prisma/prisma.service"
 import { GqlJwtAuthGuard } from "../guards/auth.gql.guard"
-import { AuthModule } from "src/auth/auth.module"
+import { JwtSharedModule } from "src/jwt.module"
 
 @Module({
-	imports: [AuthModule],
+	imports: [JwtSharedModule],
 	providers: [PostsResolver, PostsService, PrismaService, GqlJwtAuthGuard]
 })
 export class PostsModule {}
