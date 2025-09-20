@@ -9,17 +9,16 @@ export class AuthService {
 		if (password !== process.env.ADMIN_PASSWORD) {
 			throw new UnauthorizedException("Invalid password")
 		}
-
 		const payload = { role: "admin" }
 		return this.jwtService.sign(payload)
 	}
 
-	// checkToken(token: string) {
-	// 	try {
-	// 		const result = this.jwtService.verify(token)
-	// 		return result
-	// 	} catch {
-	// 		throw new UnauthorizedException("Invalid token")
-	// 	}
-	// }
+	checkToken(token: string): boolean {
+		try {
+			this.jwtService.verify(token)
+			return true
+		} catch {
+			throw new UnauthorizedException("Invalid token")
+		}
+	}
 }
