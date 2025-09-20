@@ -1,27 +1,18 @@
-import { APIGatewayProxyEvent, Context, APIGatewayProxyResult, Callback } from "aws-lambda"
-import serverlessExpress from "@vendia/serverless-express"
 import { NestFactory } from "@nestjs/core"
 import { AppModule } from "../src/app.module"
-import { ExpressAdapter } from "@nestjs/platform-express"
-import express from "express"
+import { Request, Response } from "express"
 
-type LambdaHandler = (
-	event: APIGatewayProxyEvent,
-	context: Context,
-	callback: Callback<APIGatewayProxyResult>
-) => Promise<APIGatewayProxyResult>
+let cachedHandler: (req: Request, res: Response) => void
 
-let cachedHandler: LambdaHandler
-
-export const handler: LambdaHandler = async (event, context, callback) => {
+export default async function handler(req: Request, res: Response) {
 	if (!cachedHandler) {
-		const expressApp = express()
-		const nestApp = await NestFactory.create(AppModule, new ExpressAdapter(expressApp))
-		nestApp.enableCors()
-		await nestApp.init()
+		const app = await NestFactory.create(AppModule)
+		app.enableCors()
+		await app.init()
 
-		cachedHandler = serverlessExpress({ app: expressApp }) as unknown as LambdaHandler
+		const instance = app.getHttpAdapter().getInstance()
+		cachedHandler = instance as unknown as (req: Request, res: Response) => void
 	}
 
-	return cachedHandler(event, context, callback)
+	return cachedHandler(req, res)
 }
