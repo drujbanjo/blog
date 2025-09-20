@@ -1,10 +1,15 @@
 import { Module } from "@nestjs/common"
 import { AuthService } from "./auth.service"
 import { AuthResolver } from "./auth.resolver"
-import { JwtSharedModule } from "src/jwt.module"
+import { JwtModule } from "@nestjs/jwt"
 
 @Module({
-	imports: [JwtSharedModule],
+	imports: [
+		JwtModule.register({
+			secret: process.env.JWT_SECRET,
+			signOptions: { expiresIn: "12h" }
+		})
+	],
 	providers: [AuthService, AuthResolver],
 	exports: [AuthService] // 👈 ОБЯЗАТЕЛЬНО
 })

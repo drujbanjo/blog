@@ -14,7 +14,7 @@ import { AppController } from "./app.controller"
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
 			autoSchemaFile: true, // генерируем схему на лету
-			playground: true // включить GraphQL Playground
+			playground: false // включить GraphQL Playground
 		})
 	],
 	controllers: [AppController]

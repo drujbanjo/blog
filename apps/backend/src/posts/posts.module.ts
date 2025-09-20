@@ -3,10 +3,15 @@ import { PostsService } from "./posts.service"
 import { PostsResolver } from "./posts.resolver"
 import { PrismaService } from "../prisma/prisma.service"
 import { GqlJwtAuthGuard } from "../guards/auth.gql.guard"
-import { JwtSharedModule } from "src/jwt.module"
+import { JwtModule } from "@nestjs/jwt"
 
 @Module({
-	imports: [JwtSharedModule],
+	imports: [
+		JwtModule.register({
+			secret: process.env.JWT_SECRET,
+			signOptions: { expiresIn: "12h" }
+		})
+	],
 	providers: [PostsResolver, PostsService, PrismaService, GqlJwtAuthGuard]
 })
 export class PostsModule {}
