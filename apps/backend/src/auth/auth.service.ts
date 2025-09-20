@@ -14,12 +14,12 @@ export class AuthService {
 		return this.jwtService.sign(payload)
 	}
 
-	checkToken(token: string) {
-		try {
-			const result = this.jwtService.verify(token)
-			return result
-		} catch {
-			throw new UnauthorizedException("Invalid token")
-		}
-	}
+	// checkToken(token: string) {
+	// 	try {
+	// 		const result = this.jwtService.verify(token)
+	// 		return result
+	// 	} catch {
+	// 		throw new UnauthorizedException("Invalid token")
+	// 	}
+	// }
 }
