@@ -1,18 +1,17 @@
 import { NestFactory } from "@nestjs/core"
 import { AppModule } from "../src/app.module"
-import { Request, Response } from "express"
+import serverlessExpress from "@vendia/serverless-express"
 
-let cachedHandler: (req: Request, res: Response) => void
+let cachedServer: any
 
-export default async function handler(req: Request, res: Response) {
-	if (!cachedHandler) {
+export default async function handler(event: any, context: any) {
+	if (!cachedServer) {
 		const app = await NestFactory.create(AppModule)
 		app.enableCors()
 		await app.init()
 
-		const instance = app.getHttpAdapter().getInstance()
-		cachedHandler = instance as unknown as (req: Request, res: Response) => void
+		const expressApp = app.getHttpAdapter().getInstance()
+		cachedServer = serverlessExpress({ app: expressApp })
 	}
-
-	return cachedHandler(req, res)
+	return cachedServer(event, context)
 }
