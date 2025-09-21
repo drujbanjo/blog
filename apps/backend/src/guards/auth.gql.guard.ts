@@ -1,7 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 import { GqlExecutionContext } from "@nestjs/graphql"
-import { IncomingHttpHeaders } from "http"
+
+import { Request } from "express"
 
 @Injectable()
 export class GqlJwtAuthGuard implements CanActivate {
@@ -9,24 +10,15 @@ export class GqlJwtAuthGuard implements CanActivate {
 
 	canActivate(context: ExecutionContext): boolean {
 		const ctx = GqlExecutionContext.create(context)
-		const req = ctx.getContext<{ req: { headers: IncomingHttpHeaders } }>().req
+		const req = ctx.getContext<{ req: Request }>().req
+		const token = req.cookies?.token // ключевой момент
 
-		if (!req) {
-			throw new UnauthorizedException("Request not found in GraphQL context")
-		}
-
-		const authHeader = (req.headers.token as string) || ""
-		const token = authHeader.replace(/^Bearer\s+/i, "")
-
-		if (!token) {
-			throw new UnauthorizedException("Token not found")
-		}
+		if (!token) throw new UnauthorizedException("Token not found")
 
 		try {
 			this.jwtService.verify(token, { secret: process.env.JWT_SECRET })
 			return true
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		} catch (err) {
+		} catch {
 			throw new UnauthorizedException("Invalid token")
 		}
 	}
