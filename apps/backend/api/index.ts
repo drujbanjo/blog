@@ -8,7 +8,7 @@ export default async function handler(req: Request, res: Response) {
 	if (!cachedHandler) {
 		const app = await NestFactory.create(AppModule)
 		app.enableCors({
-			origin: "http://localhost:3000",
+			origin: true,
 			credentials: true
 		})
 		await app.init()
