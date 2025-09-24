@@ -12,7 +12,7 @@ export default function remarkBlockquote() {
 						hName: "Blockquote",
 						hProperties: { type: match[1] }
 					}
-					firstChild.children[0].value = match[2] // убираем префикс из текста
+					firstChild.children[0].value = match[2]
 				}
 			}
 		})

@@ -17,10 +17,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body className={`${inter.className} ${jetBrains.variable} scroll-smooth antialiased`}>
+			<body className={`${inter.variable} ${jetBrains.variable} scroll-smooth antialiased`}>
 				<Providers>
 					<Header />
-					<main className="mt-12">{children}</main>
+					<main className="mt-12 flex flex-1 flex-col">{children}</main>
 				</Providers>
 			</body>
 		</html>

@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react"
 
 import { Markdown, Badge, Container, Toc } from "@/components"
 import { useGetPostQuery } from "@/graphql"
-import { mdxSerialize } from "@/lib/mdx"
+import { mdxSerialize, TocNode } from "@/lib/mdx"
 
 const Page = () => {
 	const params = useParams() as { id: string }
@@ -16,7 +16,7 @@ const Page = () => {
 	})
 
 	const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null)
-	const [toc, setToc] = useState<{ depth: number; value: string }[]>([])
+	const [toc, setToc] = useState<TocNode[]>([])
 
 	useEffect(() => {
 		if (data?.post?.content) {
@@ -25,12 +25,10 @@ const Page = () => {
 				setToc(res.toc)
 			})
 		}
-
-		console.log(data)
 	}, [data])
 
 	return (
-		<Container>
+		<Container size="lg">
 			<div className="mb-6">
 				<h1 className="mb-2 text-5xl font-black">{data?.post?.title}</h1>
 				<ul className="align-center flex gap-2">

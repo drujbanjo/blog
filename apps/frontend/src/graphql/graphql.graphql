@@ -1,23 +1,51 @@
+# Posts
+
+fragment PostFields on Post {
+	id
+	title
+	description
+	content
+	tags
+	createdAt
+	updatedAt
+}
+
 query GetPosts {
 	posts {
-		id
-		title
-		description
-		content
-		tags
-		createdAt
-		updatedAt
+		...PostFields
 	}
 }
 
 query GetPost($id: String!) {
 	post(id: $id) {
-		id
-		title
-		description
-		content
-		tags
-		createdAt
-		updatedAt
+		...PostFields
 	}
+}
+
+mutation CreatePost($data: CreatePostInput!) {
+	createPost(data: $data) {
+		...PostFields
+	}
+}
+
+mutation UpdatePost($id: String!, $data: UpdatePostInput!) {
+	updatePost(id: $id, data: $data) {
+		...PostFields
+	}
+}
+
+mutation DeletePost($id: String!) {
+	deletePost(id: $id)
+}
+
+# Auth
+
+mutation Login($password: String!) {
+	login(password: $password) {
+		token
+	}
+}
+
+query CheckToken($token: String!) {
+	checkToken(token: $token)
 }

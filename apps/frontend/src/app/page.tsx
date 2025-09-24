@@ -12,6 +12,7 @@ import {
 	CardHeader,
 	CardTitle,
 	Container,
+	HomeSkeleton,
 	Input
 } from "@/components"
 import { Post, useGetPostsQuery } from "@/graphql"
@@ -41,11 +42,11 @@ const Home = () => {
 				className="mb-4 max-w-2xl"
 			/>
 			{loading ? (
-				<p>Загрузка...</p>
+				<HomeSkeleton />
 			) : error ? (
 				<p>Ошибка: {error.message}</p>
 			) : (
-				<ul className="grid grid-cols-3 gap-4">
+				<ul className="grid grid-cols-3 items-stretch gap-4">
 					{posts.map((post: Post) => (
 						<Item key={post.id} post={post} />
 					))}
@@ -61,18 +62,18 @@ const Item = ({ post }: { post: Post }) => {
 			<Link href={`/posts/${post.id}`} className="no-underline">
 				<Card>
 					<CardHeader>
-						<CardTitle>{post.title}</CardTitle>
+						<CardTitle className="line-clamp-1 truncate">{post.title}</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<CardDescription>{post.description}</CardDescription>
+						<CardDescription className="line-clamp-2">{post.description}</CardDescription>
 					</CardContent>
 					<CardFooter>
-						<div className="flex items-center gap-2">
-							{post.tags.map((tag: string, idx: number) => (
-								<CardDescription key={idx}>
-									<Badge>{tag}</Badge>
-								</CardDescription>
-							))}
+						<div className="flex items-center gap-2 overflow-hidden">
+							<div className="line-clamp-1 flex gap-2 truncate">
+								{post.tags.map((tag: string, idx: number) => (
+									<Badge key={idx}>{tag}</Badge>
+								))}
+							</div>
 						</div>
 					</CardFooter>
 				</Card>

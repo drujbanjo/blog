@@ -1,4 +1,4 @@
-import { Github } from "lucide-react"
+import { Github, UserCircle } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -19,6 +19,11 @@ export const Header = () => (
 				</div>
 
 				<div className="flex items-center gap-2">
+					<Button size={"icon"} variant={"secondary"} asChild>
+						<Link href="/admin">
+							<UserCircle />
+						</Link>
+					</Button>
 					<Button size={"icon"} variant={"secondary"} asChild>
 						<Link href="https://github.com/drujbanjo" target="_blank">
 							<Github />
