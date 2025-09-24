@@ -19,7 +19,9 @@ export type TocNode = {
 function extractHeadings() {
 	const flat: { depth: number; value: string }[] = []
 	return [
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		() => (tree: any) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			visit(tree, "heading", (node: any) => {
 				const text = toString(node)
 				flat.push({ depth: node.depth, value: text })

@@ -3,6 +3,7 @@ import { visit } from "unist-util-visit"
 
 export default function remarkBlockquote() {
 	return (tree: Node) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		visit(tree, "blockquote", (node: any) => {
 			const firstChild = node.children[0]
 			if (firstChild.type === "paragraph" && typeof firstChild.children[0].value === "string") {

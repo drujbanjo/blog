@@ -48,6 +48,7 @@ type MarkdownProps = {
 	mdx: MDXRemoteSerializeResult
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const CodeBlock = ({ code, language, props }: { code: string; language: string; props?: any }) => {
 	const [copied, setCopied] = useState(false)
 
@@ -115,6 +116,7 @@ export const Markdown = ({ mdx }: MarkdownProps) => {
 			</blockquote>
 		),
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		code: ({ className, children, ...props }: any) => {
 			const raw = String(children).trim()
 			if (!className) {

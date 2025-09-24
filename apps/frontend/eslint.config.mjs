@@ -12,6 +12,15 @@ export default [
 	js.configs.recommended,
 
 	...tseslint.configs.recommended,
+
+	{
+		plugins: {
+			"@next/next": next
+		},
+		rules: {
+			...next.configs["core-web-vitals"].rules // ✅ берём правила прямо из configs
+		}
+	},
 	{
 		files: ["src/**/*.ts", "src/**/*.tsx"],
 		...tseslint.configs.recommendedTypeChecked[0],
@@ -101,6 +110,6 @@ export default [
 	prettier,
 
 	{
-		ignores: [".next/**", "node_modules/**"]
+		ignores: [".next/**", "node_modules/**", "src/graphql/*.ts", "src/components/ui/**/*"]
 	}
 ]

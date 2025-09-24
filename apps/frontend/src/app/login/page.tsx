@@ -27,6 +27,7 @@ export default function LoginPage() {
 			if (!json.ok) throw new Error("Invalid password")
 
 			router.push("/admin")
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			setError(err.message)
 		} finally {
