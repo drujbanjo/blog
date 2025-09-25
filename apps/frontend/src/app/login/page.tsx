@@ -26,6 +26,7 @@ export default function LoginPage() {
 			const json = await res.json()
 			if (!json.ok) throw new Error("Invalid password")
 
+			localStorage.setItem("token", json.token)
 			router.push("/admin")
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {

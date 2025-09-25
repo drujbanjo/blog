@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { Input, Textarea, Button, Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components"
-import { useCreatePostMutation, CreatePostInput } from "@/graphql" // путь к сгенерированным типам
+import { useCreatePostMutation, CreatePostInput } from "@/graphql"
 
 const schema = z.object({
 	title: z.string().min(3),
@@ -29,10 +29,24 @@ export default function CreatePostForm() {
 			content: data.content,
 			tags: data.tags ? data.tags.split(",").map(t => t.trim()) : []
 		}
+
+		// достаём токен из localStorage
+		const token = localStorage.getItem("token")
+		if (!token) {
+			alert("Нет токена — авторизуйтесь снова")
+			return
+		}
+
 		await createPost({
-			variables: { data: input }
-			// refetchQueries: ["GetPosts"] при необходимости обновления списка
+			variables: { data: input },
+			context: {
+				headers: {
+					token: `Bearer ${token}`
+				}
+			}
+			// refetchQueries: ["GetPosts"] если нужно обновлять список
 		})
+
 		form.reset()
 	}
 

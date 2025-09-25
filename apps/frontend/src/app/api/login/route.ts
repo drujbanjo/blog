@@ -21,13 +21,6 @@ export async function POST(req: Request) {
 	const { data, errors } = await r.json()
 	if (errors || !data?.login) return NextResponse.json({ ok: false }, { status: 401 })
 
-	const res = NextResponse.json({ ok: true })
-	res.cookies.set("token", data.login.token, {
-		httpOnly: true,
-		secure: true,
-		sameSite: "lax",
-		path: "/",
-		maxAge: 3600
-	})
-	return res
+	// просто возвращаем токен
+	return NextResponse.json({ ok: true, token: data.login.token })
 }
