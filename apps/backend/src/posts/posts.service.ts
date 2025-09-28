@@ -36,4 +36,19 @@ export class PostsService {
 		await this.prisma.post.delete({ where: { id } })
 		return true
 	}
+
+	async deleteMany(ids: string[]) {
+		const posts = await this.prisma.post.findMany({
+			where: { id: { in: ids } }
+		})
+		if (posts.length !== ids.length) {
+			const foundIds = posts.map(post => post.id)
+			const notFoundIds = ids.filter(id => !foundIds.includes(id))
+			throw new NotFoundException(`Posts with ids ${notFoundIds.join(", ")} not found`)
+		}
+		await this.prisma.post.deleteMany({
+			where: { id: { in: ids } }
+		})
+		return true
+	}
 }

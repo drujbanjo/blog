@@ -37,4 +37,10 @@ export class PostsResolver {
 	deletePost(@Args("id") id: string) {
 		return this.service.delete(id)
 	}
+
+	@UseGuards(GqlJwtAuthGuard)
+	@Mutation(() => Boolean)
+	deletePosts(@Args({ name: "ids", type: () => [String] }) ids: string[]) {
+		return this.service.deleteMany(ids)
+	}
 }
