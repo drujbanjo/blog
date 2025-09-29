@@ -38,6 +38,10 @@ mutation DeletePost($id: String!) {
 	deletePost(id: $id)
 }
 
+mutation DeletePosts($ids: [String!]!) {
+	deletePosts(ids: $ids)
+}
+
 # Auth
 
 mutation Login($password: String!) {

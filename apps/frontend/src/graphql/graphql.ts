@@ -34,6 +34,7 @@ export type Mutation = {
 	__typename?: "Mutation"
 	createPost: Post
 	deletePost: Scalars["Boolean"]["output"]
+	deletePosts: Scalars["Boolean"]["output"]
 	login: Login
 	updatePost: Post
 }
@@ -44,6 +45,10 @@ export type MutationCreatePostArgs = {
 
 export type MutationDeletePostArgs = {
 	id: Scalars["String"]["input"]
+}
+
+export type MutationDeletePostsArgs = {
+	ids: Array<Scalars["String"]["input"]>
 }
 
 export type MutationLoginArgs = {
@@ -69,7 +74,7 @@ export type Post = {
 export type Query = {
 	__typename?: "Query"
 	checkToken: Scalars["Boolean"]["output"]
-	post: Maybe<Post>
+	post?: Maybe<Post>
 	posts: Array<Post>
 }
 
@@ -82,10 +87,10 @@ export type QueryPostArgs = {
 }
 
 export type UpdatePostInput = {
-	content: InputMaybe<Scalars["String"]["input"]>
-	description: InputMaybe<Scalars["String"]["input"]>
-	tags: InputMaybe<Array<Scalars["String"]["input"]>>
-	title: InputMaybe<Scalars["String"]["input"]>
+	content?: InputMaybe<Scalars["String"]["input"]>
+	description?: InputMaybe<Scalars["String"]["input"]>
+	tags?: InputMaybe<Array<Scalars["String"]["input"]>>
+	title?: InputMaybe<Scalars["String"]["input"]>
 }
 
 export type PostFieldsFragment = {
@@ -121,7 +126,7 @@ export type GetPostQueryVariables = Exact<{
 
 export type GetPostQuery = {
 	__typename?: "Query"
-	post: {
+	post?: {
 		__typename?: "Post"
 		id: string
 		title: string
@@ -175,6 +180,12 @@ export type DeletePostMutationVariables = Exact<{
 }>
 
 export type DeletePostMutation = { __typename?: "Mutation"; deletePost: boolean }
+
+export type DeletePostsMutationVariables = Exact<{
+	ids: Array<Scalars["String"]["input"]> | Scalars["String"]["input"]
+}>
+
+export type DeletePostsMutation = { __typename?: "Mutation"; deletePosts: boolean }
 
 export type LoginMutationVariables = Exact<{
 	password: Scalars["String"]["input"]
@@ -393,6 +404,39 @@ export function useDeletePostMutation(
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>
+export const DeletePostsDocument = gql`
+	mutation DeletePosts($ids: [String!]!) {
+		deletePosts(ids: $ids)
+	}
+`
+export type DeletePostsMutationFn = Apollo.MutationFunction<DeletePostsMutation, DeletePostsMutationVariables>
+
+/**
+ * __useDeletePostsMutation__
+ *
+ * To run a mutation, you first call `useDeletePostsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePostsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePostsMutation, { data, loading, error }] = useDeletePostsMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeletePostsMutation(
+	baseOptions?: Apollo.MutationHookOptions<DeletePostsMutation, DeletePostsMutationVariables>
+) {
+	const options = { ...defaultOptions, ...baseOptions }
+	return Apollo.useMutation<DeletePostsMutation, DeletePostsMutationVariables>(DeletePostsDocument, options)
+}
+export type DeletePostsMutationHookResult = ReturnType<typeof useDeletePostsMutation>
+export type DeletePostsMutationResult = Apollo.MutationResult<DeletePostsMutation>
+export type DeletePostsMutationOptions = Apollo.BaseMutationOptions<DeletePostsMutation, DeletePostsMutationVariables>
 export const LoginDocument = gql`
 	mutation Login($password: String!) {
 		login(password: $password) {

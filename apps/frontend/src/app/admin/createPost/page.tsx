@@ -1,47 +1,65 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import debounce from "lodash.debounce"
+import { MDXRemoteSerializeResult } from "next-mdx-remote"
+import { useState, useMemo, useCallback } from "react"
+import { useForm } from "react-hook-form"
 
-import { Container } from "@/components"
-import CreatePostForm from "@/components/createPostForm"
+import {
+	Container,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+	CreatePostForm,
+	Tabs,
+	Markdown,
+	Values,
+	schema
+} from "@/components"
+import { mdxSerialize } from "@/lib/mdx"
 
 export default function CreatePostPage() {
-	const router = useRouter()
-	const [loading, setLoading] = useState(true)
+	const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null)
+	const form = useForm<Values>({
+		resolver: zodResolver(schema),
+		defaultValues: { title: "", description: "", content: "", tags: "" }
+	})
 
-	useEffect(() => {
-		const token = localStorage.getItem("token")
-		if (!token) {
-			router.replace("/login")
+	const serializeContent = useCallback(async (value: string) => {
+		if (!value) {
+			setMdxSource(null)
 			return
 		}
+		try {
+			const res = await mdxSerialize(value)
+			setMdxSource(res.mdx)
+		} catch (err) {
+			console.error("MDX serialize error:", err)
+			setMdxSource(null)
+		}
+	}, [])
 
-		fetch(process.env.NEXT_PUBLIC_API!, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				query: `
-          query CheckToken($token: String!) {
-            checkToken(token: $token)
-          }
-        `,
-				variables: { token }
-			})
-		})
-			.then(r => r.json())
-			.then(res => {
-				if (res.errors || !res.data?.checkToken) router.replace("/login")
-			})
-			.finally(() => setLoading(false))
-	}, [router])
+	// 300 мс задержка между изменениями
+	const debouncedSerialize = useMemo(() => debounce(serializeContent, 300), [serializeContent])
 
-	if (loading) return null
+	function handleContentChange(value: string) {
+		debouncedSerialize(value)
+	}
 
 	return (
-		<Container size="lg">
+		<Container>
 			<h1 className="text-center text-7xl font-black">Create Post</h1>
-			<CreatePostForm />
+			<Tabs defaultValue="form">
+				<TabsList>
+					<TabsTrigger value="form">Form</TabsTrigger>
+					<TabsTrigger value="content">Content</TabsTrigger>
+				</TabsList>
+				<TabsContent value="form">
+					<CreatePostForm form={form} onContentChange={handleContentChange} />
+				</TabsContent>
+				<TabsContent value="content">{mdxSource ? <Markdown mdx={mdxSource} /> : null}</TabsContent>
+			</Tabs>
 		</Container>
 	)
 }

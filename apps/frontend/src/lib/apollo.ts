@@ -17,6 +17,7 @@ export const client = new ApolloClient({
 	link: authLink.concat(
 		new HttpLink({
 			uri: process.env.NEXT_PUBLIC_API!
+			// uri: "http://localhost:4200/graphql"
 			// credentials: "include" // не нужен, если не используем cookie
 		})
 	),

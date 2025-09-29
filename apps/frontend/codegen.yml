@@ -10,4 +10,5 @@ generates:
       withHooks: true
       withComponent: false
       withHOC: false
-      avoidOptionals: true
+      avoidOptionals: false
+      noLocation: false
