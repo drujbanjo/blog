@@ -50,6 +50,6 @@ mutation Login($password: String!) {
 	}
 }
 
-query CheckToken($token: String!) {
-	checkToken(token: $token)
+query CheckToken {
+	checkToken
 }

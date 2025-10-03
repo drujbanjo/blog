@@ -1,5 +1,4 @@
 "use client"
-
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
@@ -20,17 +19,29 @@ export default function LoginPage() {
 			const res = await fetch("/api/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ password })
+				body: JSON.stringify({ password }),
+				credentials: "include"
 			})
 
-			const json = await res.json()
+			// Check if response is ok first
+			if (!res.ok) {
+				throw new Error(`HTTP error! status: ${res.status}`)
+			}
+
+			// Get the response text first to see what we're actually receiving
+			const text = await res.text()
+			console.log("Response text:", text)
+
+			// Try to parse it
+			const json = JSON.parse(text)
+
 			if (!json.ok) throw new Error("Invalid password")
 
-			localStorage.setItem("token", json.token)
 			router.push("/admin")
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
-			setError(err.message)
+			console.error("Login error:", err)
+			setError(err.message || "An error occurred")
 		} finally {
 			setLoading(false)
 		}
@@ -40,9 +51,7 @@ export default function LoginPage() {
 		<div className="flex flex-1 items-center justify-center">
 			<form onSubmit={handleLogin} className="border-border bg-card w-full max-w-md rounded-2xl border p-8 shadow-lg">
 				<h1 className="mb-6 text-center text-3xl font-bold">Admin Login</h1>
-
 				{error && <p className="mb-4 text-center font-medium text-red-500">{error}</p>}
-
 				<div className="mb-6">
 					<Input
 						type="password"
@@ -53,7 +62,6 @@ export default function LoginPage() {
 						className="w-full"
 					/>
 				</div>
-
 				<Button
 					type="submit"
 					disabled={loading}

@@ -14,8 +14,12 @@ import { AppController } from "./app.controller"
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
 			autoSchemaFile: true, // генерируем схему на лету
-			playground: false, // включить GraphQL Playground
-			context: ({ req, res }: { req: Request; res: Response }) => ({ req, res })
+			context: ({ req, res }) => {
+				const tokenFromCookie = req.cookies?.token
+				const authHeader = req.headers?.authorization
+				const tokenFromHeader = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : undefined
+				return { req, res, token: tokenFromCookie || tokenFromHeader } // 👈 добавь res
+			}
 		})
 	],
 	controllers: [AppController]

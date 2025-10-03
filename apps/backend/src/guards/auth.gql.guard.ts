@@ -1,7 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common"
 import { JwtService } from "@nestjs/jwt"
 import { GqlExecutionContext } from "@nestjs/graphql"
-import { Request } from "express"
 
 @Injectable()
 export class GqlJwtAuthGuard implements CanActivate {
@@ -9,13 +8,16 @@ export class GqlJwtAuthGuard implements CanActivate {
 
 	canActivate(context: ExecutionContext): boolean {
 		const ctx = GqlExecutionContext.create(context)
-		const req = ctx.getContext<{ req: Request }>().req
+		const { token }: { token: string } = ctx.getContext() // Получаем токен из контекста
 
-		const token = req.headers.token as string | undefined
-		if (!token) throw new UnauthorizedException("Token not found")
+		if (!token) {
+			throw new UnauthorizedException("Token not provided")
+		}
 
 		try {
-			this.jwtService.verify(token, { secret: process.env.JWT_SECRET })
+			const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET })
+			// Сохраняем пользователя в контексте для дальнейшего использования
+			ctx.getContext().user = payload
 			return true
 		} catch {
 			throw new UnauthorizedException("Invalid token")

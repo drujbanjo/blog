@@ -1,25 +1,11 @@
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from "@apollo/client"
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client"
 
-const authLink = new ApolloLink((operation, forward) => {
-	const token = localStorage.getItem("token") // или другой источник
-	if (token) {
-		operation.setContext(({ headers = {} }) => ({
-			headers: {
-				...headers,
-				token // передаем токен в header
-			}
-		}))
-	}
-	return forward(operation)
+const httpLink = createHttpLink({
+	uri: "/api/graphql", // ← Используем наш Next.js API route
+	credentials: "same-origin" // ← Меняем на same-origin
 })
 
 export const client = new ApolloClient({
-	link: authLink.concat(
-		new HttpLink({
-			uri: process.env.NEXT_PUBLIC_API!
-			// uri: "http://localhost:4200/graphql"
-			// credentials: "include" // не нужен, если не используем cookie
-		})
-	),
+	link: httpLink,
 	cache: new InMemoryCache()
 })

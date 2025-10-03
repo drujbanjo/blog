@@ -78,10 +78,6 @@ export type Query = {
 	posts: Array<Post>
 }
 
-export type QueryCheckTokenArgs = {
-	token: Scalars["String"]["input"]
-}
-
 export type QueryPostArgs = {
 	id: Scalars["String"]["input"]
 }
@@ -193,9 +189,7 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: "Mutation"; login: { __typename?: "Login"; token: string } }
 
-export type CheckTokenQueryVariables = Exact<{
-	token: Scalars["String"]["input"]
-}>
+export type CheckTokenQueryVariables = Exact<{ [key: string]: never }>
 
 export type CheckTokenQuery = { __typename?: "Query"; checkToken: boolean }
 
@@ -471,8 +465,8 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>
 export const CheckTokenDocument = gql`
-	query CheckToken($token: String!) {
-		checkToken(token: $token)
+	query CheckToken {
+		checkToken
 	}
 `
 
@@ -488,14 +482,10 @@ export const CheckTokenDocument = gql`
  * @example
  * const { data, loading, error } = useCheckTokenQuery({
  *   variables: {
- *      token: // value for 'token'
  *   },
  * });
  */
-export function useCheckTokenQuery(
-	baseOptions: Apollo.QueryHookOptions<CheckTokenQuery, CheckTokenQueryVariables> &
-		({ variables: CheckTokenQueryVariables; skip?: boolean } | { skip: boolean })
-) {
+export function useCheckTokenQuery(baseOptions?: Apollo.QueryHookOptions<CheckTokenQuery, CheckTokenQueryVariables>) {
 	const options = { ...defaultOptions, ...baseOptions }
 	return Apollo.useQuery<CheckTokenQuery, CheckTokenQueryVariables>(CheckTokenDocument, options)
 }

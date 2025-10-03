@@ -1,54 +1,45 @@
 "use client"
-
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-import { CheckTokenDocument } from "@/graphql"
+import { useCheckTokenLazyQuery } from "@/graphql"
 import { TokenProvider } from "@/providers"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
 	const router = useRouter()
-	const [loading, setLoading] = useState(true)
-	const [token, setToken] = useState<string | null>(null)
-	const [error, setError] = useState(false)
+	const [valid, setValid] = useState(false)
+	const [check, { data, error, loading }] = useCheckTokenLazyQuery()
 
 	useEffect(() => {
-		const controller = new AbortController()
-		const t = localStorage.getItem("token")
-		if (!t) {
+		check({
+			fetchPolicy: "no-cache"
+		})
+	}, [check])
+
+	useEffect(() => {
+		// Ждем пока loading закончится
+		if (loading) return
+
+		// Если ошибка сети - показываем экран ошибки (не редиректим)
+		if (error) {
+			return
+		}
+
+		// КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: проверяем data && data.checkToken
+		// Если data undefined - просто ждем
+		if (!data) {
+			return
+		}
+
+		// Если data есть, но checkToken === false - редиректим
+		if (!data.checkToken) {
 			router.replace("/login")
 			return
 		}
 
-		const checkToken = async () => {
-			try {
-				const r = await fetch(process.env.NEXT_PUBLIC_API!, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						query: CheckTokenDocument.loc?.source.body,
-						variables: { token: t }
-					}),
-					signal: controller.signal
-				})
-				const { data, errors } = await r.json()
-				if (errors || !data?.checkToken) {
-					localStorage.removeItem("token")
-					router.replace("/login")
-				} else {
-					setToken(t)
-				}
-			} catch {
-				// сеть или другая ошибка, не выходим сразу
-				setError(true)
-			} finally {
-				setLoading(false)
-			}
-		}
-
-		checkToken()
-		return () => controller.abort()
-	}, [router])
+		// Токен валиден
+		setValid(true)
+	}, [data, error, loading, router])
 
 	if (loading) {
 		return (
@@ -62,12 +53,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 		return (
 			<div className="flex h-screen w-full flex-col items-center justify-center gap-2">
 				<p>Ошибка сети. Попробуйте снова.</p>
-				<button className="rounded bg-gray-200 px-4 py-2" onClick={() => location.reload()}>
+				<button className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300" onClick={() => location.reload()}>
 					Перезагрузить
 				</button>
 			</div>
 		)
 	}
 
-	return <TokenProvider value={token}>{children}</TokenProvider>
+	return valid ? <TokenProvider value="ok">{children}</TokenProvider> : null
 }
