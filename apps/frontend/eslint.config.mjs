@@ -110,6 +110,6 @@ export default [
 	prettier,
 
 	{
-		ignores: [".next/**", "node_modules/**", "src/graphql/*.ts", "src/components/ui/**/*"]
+		ignores: [".next/**", "node_modules/**", "src/graphql/*.ts", "src/components/ui/**/*", "next-env.d.ts"]
 	}
 ]

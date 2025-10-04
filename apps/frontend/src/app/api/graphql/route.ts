@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 		// Получаем токен из cookies
 		const token = req.cookies.get("token")?.value
 
-		const response = await axios.post(process.env.BACKEND_API || "http://localhost:4200/graphql", body, {
+		const response = await axios.post(process.env.API || "http://localhost:4200/graphql", body, {
 			headers: {
 				"Content-Type": "application/json",
 				...(token && { Cookie: `token=${token}` })
