@@ -1,26 +1,38 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common"
-import { JwtService } from "@nestjs/jwt"
 import { GqlExecutionContext } from "@nestjs/graphql"
+import { JwtService } from "@nestjs/jwt"
 
 @Injectable()
-export class GqlJwtAuthGuard implements CanActivate {
-	constructor(private readonly jwtService: JwtService) {}
+export class GqlAuthGuard implements CanActivate {
+	constructor(private jwtService: JwtService) {}
 
 	canActivate(context: ExecutionContext): boolean {
 		const ctx = GqlExecutionContext.create(context)
-		const { token }: { token: string } = ctx.getContext() // Получаем токен из контекста
+		const request = ctx.getContext().req
 
-		if (!token) {
-			throw new UnauthorizedException("Token not provided")
+		// Проверяем Authorization header (приоритет)
+		const authHeader = request.headers.authorization
+		if (authHeader && authHeader.startsWith("Bearer ")) {
+			const token: string = authHeader.substring(7)
+			return this.validateToken(token)
 		}
 
+		// Fallback на Cookie
+		const token: string = request.cookies?.token
+		if (token) {
+			return this.validateToken(token)
+		}
+
+		throw new UnauthorizedException("No authentication token found")
+	}
+
+	private validateToken(token: string): boolean {
 		try {
-			const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET })
-			// Сохраняем пользователя в контексте для дальнейшего использования
-			ctx.getContext().user = payload
-			return true
-		} catch {
-			throw new UnauthorizedException("Invalid token")
+			const payload = this.jwtService.verify(token)
+			// Можете добавить payload в request если нужно
+			return !!payload
+		} catch (error: any) {
+			throw new UnauthorizedException("Invalid token", error)
 		}
 	}
 }

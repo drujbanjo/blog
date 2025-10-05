@@ -20,14 +20,15 @@ export class PostsService {
 	}
 
 	async update(id: string, data: UpdatePostInput) {
-		const post = await this.prisma.post.findUnique({ where: { id } })
-		if (!post) {
-			throw new Error(`Post with id ${id} not found`)
-		}
-		return this.prisma.post.update({
+		const updated = await this.prisma.post.update({
 			where: { id },
-			data
+			data: {
+				...data,
+				updatedAt: new Date() // Убедитесь, что updatedAt обновляется
+			}
 		})
+
+		return updated
 	}
 
 	async delete(id: string) {

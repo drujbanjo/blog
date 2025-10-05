@@ -4,7 +4,7 @@ import { PostsService } from "./posts.service"
 import { CreatePostInput } from "./create-post.input"
 import { UpdatePostInput } from "./update-post.input"
 import { UseGuards } from "@nestjs/common"
-import { GqlJwtAuthGuard } from "../guards/auth.gql.guard"
+import { GqlAuthGuard } from "../guards/auth.gql.guard"
 
 @Resolver(() => Post)
 export class PostsResolver {
@@ -20,25 +20,26 @@ export class PostsResolver {
 		return this.service.findOne(id)
 	}
 
-	@UseGuards(GqlJwtAuthGuard)
+	@UseGuards(GqlAuthGuard)
 	@Mutation(() => Post)
 	createPost(@Args("data") data: CreatePostInput) {
 		return this.service.create(data)
 	}
 
-	@UseGuards(GqlJwtAuthGuard)
+	@UseGuards(GqlAuthGuard)
 	@Mutation(() => Post)
-	updatePost(@Args("id") id: string, @Args("data") data: UpdatePostInput) {
-		return this.service.update(id, data)
+	async updatePost(@Args("id") id: string, @Args("data") data: UpdatePostInput) {
+		const updatedPost = await this.service.update(id, data)
+		return updatedPost
 	}
 
-	@UseGuards(GqlJwtAuthGuard)
+	@UseGuards(GqlAuthGuard)
 	@Mutation(() => Boolean)
 	deletePost(@Args("id") id: string) {
 		return this.service.delete(id)
 	}
 
-	@UseGuards(GqlJwtAuthGuard)
+	@UseGuards(GqlAuthGuard)
 	@Mutation(() => Boolean)
 	deletePosts(@Args({ name: "ids", type: () => [String] }) ids: string[]) {
 		return this.service.deleteMany(ids)
