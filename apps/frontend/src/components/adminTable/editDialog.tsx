@@ -1,9 +1,27 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Table } from "@tanstack/react-table"
 import { Dispatch, SetStateAction } from "react"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 
 import { EditState } from "./adminTable"
 
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, Input, Textarea } from "@/components"
+import {
+	Button,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+	Input,
+	Textarea
+} from "@/components"
 import { Post, UpdatePostInput, useUpdatePostMutation } from "@/graphql"
 import { cn } from "@/lib"
 
@@ -14,59 +32,114 @@ type Props = {
 	onReload: () => void
 }
 
+const formSchema = z.object({
+	value: z.string().min(1, "Value is required")
+})
+
 export function EditDialog({ editing, setEditing, table, onReload }: Props) {
 	const [updatePost] = useUpdatePostMutation()
 
-	const handleSave = async () => {
-		if (!editing) return
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			value: editing?.value || ""
+		},
+		values: {
+			value: editing?.value || ""
+		}
+	})
 
-		const row = table.getRowModel().rows.find(r => r.id === editing.rowId)
-		if (!row) return
+	const handleSave = async (values: z.infer<typeof formSchema>) => {
+		if (!editing) {
+			return
+		}
+
+		// Ищем по original.id
+		const row = table.getRowModel().rows.find(r => r.original.id === editing.rowId)
+		if (!row) {
+			return
+		}
 
 		const postId = row.original.id
 		const field = editing.colId as keyof UpdatePostInput
-		const value = editing.value
+		const value = values.value
+
+		const updateData =
+			field === "tags"
+				? {
+						[field]: value
+							.split(",")
+							.map(t => t.trim())
+							.filter(Boolean)
+					}
+				: { [field]: value }
 
 		try {
-			await updatePost({
+			const result = await updatePost({
 				variables: {
 					id: postId,
-					data: {
-						[field]: field === "tags" ? value.split(",").map(t => t.trim()) : value
-					}
-				}
+					data: updateData
+				},
+				refetchQueries: ["GetPosts"],
+				awaitRefetchQueries: true
 			})
-			onReload()
-		} catch (e) {
-			console.error(e)
-		} finally {
+
+			if (result.errors) {
+				return
+			}
+
+			await onReload()
 			setEditing(null)
+			form.reset()
+		} catch (e) {
+			console.error("Update error:", e)
 		}
 	}
 
+	// Если editing null, не рендерим содержимое диалога
+	if (!editing) {
+		return (
+			<Dialog open={false} onOpenChange={() => setEditing(null)}>
+				<DialogContent />
+			</Dialog>
+		)
+	}
+
 	return (
-		<Dialog open={!!editing} onOpenChange={() => setEditing(null)}>
-			<DialogContent className={cn(editing?.colId === "content" && "sm:max-w-3xl")}>
+		<Dialog
+			open={true}
+			onOpenChange={() => {
+				setEditing(null)
+				form.reset()
+			}}
+		>
+			<DialogContent className={cn(editing.colId === "content" && "sm:max-w-3xl")}>
 				<DialogHeader>
-					<DialogTitle>Edit {editing?.colId}</DialogTitle>
+					<DialogTitle>Edit {editing.colId}</DialogTitle>
 				</DialogHeader>
-				<div className="space-y-4">
-					{editing?.colId === "content" ? (
-						<Textarea
-							className="min-h-96"
-							value={editing?.value}
-							onChange={e => setEditing(prev => prev && { ...prev, value: e.target.value })}
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(handleSave)} className="space-y-4">
+						<FormField
+							control={form.control}
+							name="value"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="capitalize">{editing.colId}</FormLabel>
+									<FormControl>
+										{editing.colId === "content" ? <Textarea className="min-h-96" {...field} /> : <Input {...field} />}
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					) : (
-						<Input
-							value={editing?.value}
-							onChange={e => setEditing(prev => prev && { ...prev, value: e.target.value })}
-						/>
-					)}
-					<DialogFooter>
-						<Button onClick={handleSave}>Save</Button>
-					</DialogFooter>
-				</div>
+						<DialogFooter>
+							<Button type="button" variant="outline" onClick={() => setEditing(null)}>
+								Cancel
+							</Button>
+							<Button type="submit">Save</Button>
+						</DialogFooter>
+					</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	)

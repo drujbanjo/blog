@@ -1,11 +1,15 @@
 "use client"
-import { useRouter } from "next/navigation"
+
+import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
 
 import { Button, Input } from "@/components"
 
 export default function LoginPage() {
 	const router = useRouter()
+	const searchParams = useSearchParams()
+	const redirectUrl = searchParams.get("redirect") || "/admin"
+
 	const [password, setPassword] = useState("")
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
@@ -23,25 +27,24 @@ export default function LoginPage() {
 				credentials: "include"
 			})
 
-			// Check if response is ok first
+			// Проверяем статус ответа
 			if (!res.ok) {
-				throw new Error(`HTTP error! status: ${res.status}`)
+				const errorData = await res.json()
+				throw new Error(errorData.error || `HTTP error! status: ${res.status}`)
 			}
 
-			// Get the response text first to see what we're actually receiving
-			const text = await res.text()
-			console.log("Response text:", text)
+			const json = await res.json()
 
-			// Try to parse it
-			const json = JSON.parse(text)
+			if (!json.ok) {
+				throw new Error("Invalid password")
+			}
 
-			if (!json.ok) throw new Error("Invalid password")
-
-			router.push("/admin")
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// Успешный логин - редирект на нужную страницу
+			router.push(redirectUrl)
+			router.refresh() // Обновляем роутер чтобы middleware сработал
 		} catch (err: any) {
 			console.error("Login error:", err)
-			setError(err.message || "An error occurred")
+			setError(err.message || "An error occurred during login")
 		} finally {
 			setLoading(false)
 		}
@@ -51,7 +54,13 @@ export default function LoginPage() {
 		<div className="flex flex-1 items-center justify-center">
 			<form onSubmit={handleLogin} className="border-border bg-card w-full max-w-md rounded-2xl border p-8 shadow-lg">
 				<h1 className="mb-6 text-center text-3xl font-bold">Admin Login</h1>
-				{error && <p className="mb-4 text-center font-medium text-red-500">{error}</p>}
+
+				{error && (
+					<div className="mb-4 rounded-lg bg-red-50 p-3 text-center">
+						<p className="font-medium text-red-600">{error}</p>
+					</div>
+				)}
+
 				<div className="mb-6">
 					<Input
 						type="password"
@@ -60,13 +69,12 @@ export default function LoginPage() {
 						onChange={e => setPassword(e.target.value)}
 						required
 						className="w-full"
+						autoFocus
+						disabled={loading}
 					/>
 				</div>
-				<Button
-					type="submit"
-					disabled={loading}
-					className="w-full py-3 text-lg font-semibold transition-colors duration-200"
-				>
+
+				<Button type="submit" disabled={loading} className="w-full">
 					{loading ? "Logging in..." : "Login"}
 				</Button>
 			</form>

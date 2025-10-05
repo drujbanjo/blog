@@ -1,11 +1,65 @@
-import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client"
+import { ApolloClient, InMemoryCache, createHttpLink, from } from "@apollo/client"
+import { setContext } from "@apollo/client/link/context"
+import { onError } from "@apollo/client/link/error"
 
-const httpLink = createHttpLink({
-	uri: "/api/graphql", // ← Используем наш Next.js API route
-	credentials: "same-origin" // ← Меняем на same-origin
+// Error handling link
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+	if (graphQLErrors) {
+		graphQLErrors.forEach(({ message, locations, path }) =>
+			console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+		)
+	}
+	if (networkError) {
+		console.error(`[Network error]: ${networkError}`)
+	}
 })
 
+// HTTP link - используем Next.js API route как прокси
+const httpLink = createHttpLink({
+	uri: "/api/graphql",
+	credentials: "include", // КРИТИЧЕСКИ ВАЖНО для отправки cookies!
+	fetch
+})
+
+// Auth link - добавляем дополнительные заголовки если нужно
+const authLink = setContext((_, { headers }) => {
+	return {
+		headers: {
+			...headers
+			// Можно добавить дополнительные заголовки
+		}
+	}
+})
+
+// Создаем Apollo Client
 export const client = new ApolloClient({
-	link: httpLink,
-	cache: new InMemoryCache()
+	link: from([errorLink, authLink, httpLink]),
+	cache: new InMemoryCache({
+		typePolicies: {
+			Query: {
+				fields: {
+					posts: {
+						merge(existing = [], incoming) {
+							return incoming
+						}
+					}
+				}
+			}
+		}
+	}),
+	defaultOptions: {
+		watchQuery: {
+			fetchPolicy: "cache-and-network",
+			errorPolicy: "all"
+		},
+		query: {
+			fetchPolicy: "network-only",
+			errorPolicy: "all"
+		},
+		mutate: {
+			errorPolicy: "all"
+		}
+	},
+	// Для production отключаем devtools
+	connectToDevTools: process.env.NODE_ENV === "development"
 })

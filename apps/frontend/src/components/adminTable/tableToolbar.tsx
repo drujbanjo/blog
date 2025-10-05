@@ -79,7 +79,7 @@ export function TableToolbar({ table, selectedIds, currentDateSort, loading, onD
 				</Button>
 			)}
 
-			<Button variant="outline" size={"icon"} onClick={onReload}>
+			<Button variant="outline" size={"icon"} disabled={loading} onClick={onReload}>
 				<RefreshCw />
 			</Button>
 		</div>
