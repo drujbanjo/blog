@@ -19,7 +19,8 @@ import { AppController } from "./app.controller"
 				const authHeader = req.headers?.authorization
 				const tokenFromHeader = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : undefined
 				return { req, res, token: tokenFromCookie || tokenFromHeader } // 👈 добавь res
-			}
+			},
+			introspection: process.env.NODE_ENV !== "production"
 		})
 	],
 	controllers: [AppController]
