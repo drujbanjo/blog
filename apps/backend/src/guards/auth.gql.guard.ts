@@ -32,6 +32,7 @@ export class GqlAuthGuard implements CanActivate {
 			// Можете добавить payload в request если нужно
 			return !!payload
 		} catch (error: any) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			throw new UnauthorizedException("Invalid token", error)
 		}
 	}

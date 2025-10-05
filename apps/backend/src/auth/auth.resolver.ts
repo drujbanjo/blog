@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args, Query, Context } from "@nestjs/graphql"
 import { AuthService } from "./auth.service"
 import { Login } from "./auth.model"
-import { Request, Response } from "express"
+import { Response } from "express"
 import { JwtService } from "@nestjs/jwt"
 
 @Resolver()
@@ -32,7 +32,7 @@ export class AuthResolver {
 			const authHeader = request.headers.authorization
 
 			if (authHeader && authHeader.startsWith("Bearer ")) {
-				const token = authHeader.substring(7)
+				const token: string = authHeader.substring(7)
 
 				try {
 					const payload = this.jwtService.verify(token)
@@ -45,7 +45,7 @@ export class AuthResolver {
 			}
 
 			// Fallback на Cookie (от /api/login)
-			const cookieToken = request.cookies?.token
+			const cookieToken: string = request.cookies?.token
 
 			if (cookieToken) {
 				try {
