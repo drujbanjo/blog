@@ -39,6 +39,7 @@ export const client = new ApolloClient({
 			Query: {
 				fields: {
 					posts: {
+						// eslint-disable-next-line unused-imports/no-unused-vars
 						merge(existing = [], incoming) {
 							return incoming
 						}
