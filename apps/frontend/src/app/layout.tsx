@@ -1,11 +1,10 @@
+import { Analytics } from "@vercel/analytics/next"
 import type { Metadata } from "next"
 
 import { Header } from "@/components"
 import { inter, jetBrains } from "@/lib"
 import { Providers } from "@/providers"
 import "@/styles/main.css"
-
-import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
 	title: {
