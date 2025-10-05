@@ -45,6 +45,7 @@ const styled =
 		})
 
 type MarkdownProps = {
+	className?: string
 	mdx: MDXRemoteSerializeResult
 }
 
@@ -78,7 +79,7 @@ export const CodeBlock = ({ code, language, props }: { code: string; language: s
 	)
 }
 
-export const Markdown = ({ mdx }: MarkdownProps) => {
+export const Markdown = ({ className, mdx }: MarkdownProps) => {
 	useEffect(() => {
 		Prism.highlightAll()
 	}, [mdx])
@@ -90,6 +91,7 @@ export const Markdown = ({ mdx }: MarkdownProps) => {
 		h3: styled("h3", "[&_a]:no-underline mt-5 text-2xl [&_*]:font-bold"),
 		h4: styled("h4", "[&_a]:no-underline mt-4 text-xl [&_*]:font-semibold"),
 		h5: styled("h5", "[&_a]:no-underline mt-3 text-lg [&_*]font-bold"),
+		h6: styled("h6", "[&_a]:no-underline mt-3 text-md [&_*]font-bold"),
 		ul: styled("ul", "my-8 pl-8 list-inside list-disc space-y-2"),
 		ol: styled("ol", "my-8 pl-8 list-inside list-decimal space-y-2"),
 
@@ -128,7 +130,7 @@ export const Markdown = ({ mdx }: MarkdownProps) => {
 	}
 
 	return (
-		<div className="prose dark:prose-invert max-w-full py-4">
+		<div className={cn("prose dark:prose-invert py-4", className)}>
 			<MDXRemote {...mdx} components={components} />
 		</div>
 	)

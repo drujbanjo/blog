@@ -1,4 +1,3 @@
-import axios from "axios"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
@@ -8,18 +7,20 @@ export async function POST(req: NextRequest) {
 		// Получаем токен из cookies
 		const token = req.cookies.get("token")?.value
 
-		const response = await axios.post(process.env.API || "http://localhost:4200/graphql", body, {
+		const response = await fetch(process.env.API || "http://localhost:4200/graphql", {
+			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				...(token && { Cookie: `token=${token}` })
+				...(token && { Cookie: `token=${token}` }) // Передаем cookie на backend
 			},
-			withCredentials: true
+			credentials: "include",
+			body: JSON.stringify(body)
 		})
 
-		return NextResponse.json(response.data)
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	} catch (error: any) {
-		console.error("GraphQL proxy error:", error?.response?.data || error.message)
+		const data = await response.json()
+		return NextResponse.json(data)
+	} catch (error) {
+		console.error("GraphQL proxy error:", error)
 		return NextResponse.json({ errors: [{ message: "Internal server error" }] }, { status: 500 })
 	}
 }

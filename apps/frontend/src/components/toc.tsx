@@ -35,7 +35,7 @@ export const Toc = ({ toc }: { toc: TocNode[] }) => {
 	return (
 		<aside className="sticky top-20 h-[calc(100vh-5rem)] w-full max-w-64 shrink-0 overflow-y-auto backdrop-blur">
 			<div className="border-border/50 from-background/95 to-background/70 rounded-xl border bg-gradient-to-b px-5 py-6 shadow-md">
-				<p className="text-foreground mb-4 text-base font-semibold tracking-tight">Содержание</p>
+				<p className="text-foreground mb-4 text-base font-semibold tracking-tight">On this page</p>
 				{render(toc)}
 			</div>
 		</aside>

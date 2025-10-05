@@ -121,3 +121,8 @@
 		font-family: var(--font-inter);
 	}
 }
+
+.prose {
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
