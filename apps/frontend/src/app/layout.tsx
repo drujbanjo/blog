@@ -5,6 +5,8 @@ import { inter, jetBrains } from "@/lib"
 import { Providers } from "@/providers"
 import "@/styles/main.css"
 
+import { Analytics } from "@vercel/analytics/next"
+
 export const metadata: Metadata = {
 	title: {
 		default: "drujban's blog",
@@ -92,6 +94,7 @@ export default function RootLayout({
 					<Header />
 					<main className="mt-12 flex flex-1 flex-col">{children}</main>
 				</Providers>
+				<Analytics />
 			</body>
 		</html>
 	)
