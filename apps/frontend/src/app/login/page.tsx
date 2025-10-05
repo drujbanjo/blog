@@ -1,14 +1,12 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 import { Button, Input } from "@/components"
 
 export default function LoginPage() {
 	const router = useRouter()
-	const searchParams = useSearchParams()
-	const redirectUrl = searchParams.get("redirect") || "/admin"
 
 	const [password, setPassword] = useState("")
 	const [loading, setLoading] = useState(false)
@@ -40,7 +38,7 @@ export default function LoginPage() {
 			}
 
 			// Успешный логин - редирект на нужную страницу
-			router.push(redirectUrl)
+			router.push("/admin")
 			router.refresh() // Обновляем роутер чтобы middleware сработал
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
