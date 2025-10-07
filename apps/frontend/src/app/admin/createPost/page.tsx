@@ -81,18 +81,16 @@ export default function CreatePostPage() {
 
 				<TabsContent value="content">
 					{serializeError ? (
-						<div className="rounded-lg border border-yellow-200 bg-yellow-50 p-6">
-							<h3 className="mb-2 font-bold text-yellow-800">Preview Error</h3>
-							<p className="text-yellow-700">{serializeError}</p>
+						<div className="rounded-lg border p-6">
+							<h3 className="mb-2 font-bold text-yellow-600">Preview Error</h3>
+							<p className="text-yellow-400">{serializeError}</p>
 						</div>
 					) : mdxSource ? (
-						<div className="rounded-lg border border-gray-200 bg-white p-8">
+						<div>
 							<Markdown mdx={mdxSource} />
 						</div>
 					) : (
-						<div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center text-gray-500">
-							Start writing content to see preview
-						</div>
+						<div className="rounded-lg border p-12 text-center">Start writing content to see preview</div>
 					)}
 				</TabsContent>
 			</Tabs>

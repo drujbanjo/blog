@@ -54,13 +54,7 @@ export default function LoginPage() {
 			<form onSubmit={handleLogin} className="border-border bg-card w-full max-w-md rounded-2xl border p-8 shadow-lg">
 				<h1 className="mb-6 text-center text-3xl font-bold">Admin Login</h1>
 
-				{error && (
-					<div className="mb-4 rounded-lg bg-red-50 p-3 text-center">
-						<p className="font-medium text-red-600">{error}</p>
-					</div>
-				)}
-
-				<div className="mb-6">
+				<div className="mb-2">
 					<Input
 						type="password"
 						placeholder="Enter password"
@@ -73,7 +67,13 @@ export default function LoginPage() {
 					/>
 				</div>
 
-				<Button type="submit" disabled={loading} className="w-full">
+				{error && (
+					<div>
+						<p className="font-medium text-red-500">{error}</p>
+					</div>
+				)}
+
+				<Button type="submit" disabled={loading} className="mt-6 w-full">
 					{loading ? "Logging in..." : "Login"}
 				</Button>
 			</form>
