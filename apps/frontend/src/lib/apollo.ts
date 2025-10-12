@@ -54,7 +54,7 @@ export const client = new ApolloClient({
 			errorPolicy: "all"
 		},
 		query: {
-			fetchPolicy: "network-only",
+			fetchPolicy: "cache-first",
 			errorPolicy: "all"
 		},
 		mutate: {
