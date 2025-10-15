@@ -59,13 +59,34 @@ export const CodeBlock = ({ code, language, props }: { code: string; language: s
 		setTimeout(() => setCopied(false), 2000)
 	}
 
+	// Для bash форматируем каждую строку с символом $
+	const formattedCode =
+		language === "bash"
+			? code
+					.split("\n")
+					.map(line => line.trim())
+					.filter(line => line)
+					.join("\n")
+			: code
+
 	return (
 		<div className="group relative mt-4">
 			<pre className={cn(`${language !== "bash" && "line-numbers"} overflow-x-auto rounded-md p-4 font-mono`)}>
-				{language === "bash" && <span className="pointer-events-none pl-2 select-none">$ </span>}
-				<code className={`language-${language} font-mono`} {...props}>
-					{code}
-				</code>
+				{language === "bash" ? (
+					<code className={`language-${language} font-mono`} {...props}>
+						{formattedCode.split("\n").map((line, index) => (
+							<React.Fragment key={index}>
+								<span className="text-muted-foreground pointer-events-none select-none">$ </span>
+								{line}
+								{index < formattedCode.split("\n").length - 1 && "\n"}
+							</React.Fragment>
+						))}
+					</code>
+				) : (
+					<code className={`language-${language} font-mono`} {...props}>
+						{code}
+					</code>
+				)}
 			</pre>
 			<Button
 				size="sm"
