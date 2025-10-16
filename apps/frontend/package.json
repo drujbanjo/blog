@@ -10,9 +10,9 @@
 		"lint": "eslint . --max-warnings 0",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
-    "prepare": "bun run lint && bun run format && bun run check-types && bun run build",
+		"prepare": "bun run lint && bun run format && bun run check-types && bun run build",
 		"check-types": "tsc --noEmit",
-		"codegen": "graphql-codegen --config codegen.yml",
+		"codegen": "graphql-codegen --config codegen.yml"
 	},
 	"dependencies": {
 		"@apollo/client": "^3.13.9",
