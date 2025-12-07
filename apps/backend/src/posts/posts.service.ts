@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { PrismaService } from '../prisma/prisma.service'
-import { RedisService } from '../redis/redis.service'
-import { CreatePostInput } from './create-post.input'
-import { UpdatePostInput } from './update-post.input'
+import { Injectable, NotFoundException } from "@nestjs/common"
+import { PrismaService } from "../prisma/prisma.service"
+import { RedisService } from "../redis/redis.service"
+import { CreatePostInput } from "./create-post.input"
+import { UpdatePostInput } from "./update-post.input"
 
 @Injectable()
 export class PostsService {
@@ -19,14 +19,14 @@ export class PostsService {
 			return data.map(item => this.deserializeDates(item))
 		}
 
-		if (typeof data === 'object') {
+		if (typeof data === "object") {
 			const result = { ...data }
 
 			// Поля с датами в вашей модели Post
-			const dateFields = ['createdAt', 'updatedAt', 'publishedAt']
+			const dateFields = ["createdAt", "updatedAt", "publishedAt"]
 
 			for (const field of dateFields) {
-				if (result[field] && typeof result[field] === 'string') {
+				if (result[field] && typeof result[field] === "string") {
 					result[field] = new Date(result[field])
 				}
 			}
@@ -38,7 +38,7 @@ export class PostsService {
 	}
 
 	async findAll() {
-		const cacheKey = 'posts:all'
+		const cacheKey = "posts:all"
 
 		// Проверяем кеш
 		const cached = await this.redis.get<any[]>(cacheKey)
@@ -49,7 +49,7 @@ export class PostsService {
 
 		// Получаем из БД
 		const posts = await this.prisma.post.findMany({
-			orderBy: { createdAt: 'desc' },
+			orderBy: { createdAt: "desc" }
 		})
 
 		// Кешируем на 5 минут
@@ -83,7 +83,7 @@ export class PostsService {
 		const post = await this.prisma.post.create({ data })
 
 		// Инвалидируем кеш всех постов
-		await this.redis.del('posts:all')
+		await this.redis.del("posts:all")
 
 		return post
 	}
@@ -93,13 +93,13 @@ export class PostsService {
 			where: { id },
 			data: {
 				...data,
-				updatedAt: new Date(),
-			},
+				updatedAt: new Date()
+			}
 		})
 
 		// Инвалидируем кеши
 		await this.redis.del(`post:${id}`)
-		await this.redis.del('posts:all')
+		await this.redis.del("posts:all")
 
 		return updated
 	}
@@ -112,31 +112,31 @@ export class PostsService {
 
 		// Инвалидируем кеши
 		await this.redis.del(`post:${id}`)
-		await this.redis.del('posts:all')
+		await this.redis.del("posts:all")
 
 		return true
 	}
 
 	async deleteMany(ids: string[]) {
 		const posts = await this.prisma.post.findMany({
-			where: { id: { in: ids } },
+			where: { id: { in: ids } }
 		})
 
 		if (posts.length !== ids.length) {
 			const foundIds = posts.map(post => post.id)
 			const notFoundIds = ids.filter(id => !foundIds.includes(id))
-			throw new NotFoundException(`Posts with ids ${notFoundIds.join(', ')} not found`)
+			throw new NotFoundException(`Posts with ids ${notFoundIds.join(", ")} not found`)
 		}
 
 		await this.prisma.post.deleteMany({
-			where: { id: { in: ids } },
+			where: { id: { in: ids } }
 		})
 
 		// Инвалидируем все кеши постов
 		for (const id of ids) {
 			await this.redis.del(`post:${id}`)
 		}
-		await this.redis.del('posts:all')
+		await this.redis.del("posts:all")
 
 		return true
 	}

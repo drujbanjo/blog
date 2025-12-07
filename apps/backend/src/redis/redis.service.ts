@@ -1,5 +1,5 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common'
-import { Redis } from '@upstash/redis'
+import { Injectable, OnModuleInit, Logger } from "@nestjs/common"
+import { Redis } from "@upstash/redis"
 
 @Injectable()
 export class RedisService implements OnModuleInit {
@@ -12,7 +12,7 @@ export class RedisService implements OnModuleInit {
 		const token = process.env.UPSTASH_REDIS_REST_TOKEN
 
 		if (!url || !token) {
-			this.logger.warn('Redis not configured - caching disabled')
+			this.logger.warn("Redis not configured - caching disabled")
 			this.isEnabled = false
 			return
 		}
@@ -20,12 +20,12 @@ export class RedisService implements OnModuleInit {
 		try {
 			this.redis = new Redis({
 				url,
-				token,
+				token
 			})
 			this.isEnabled = true
-			this.logger.log('Redis connected successfully')
+			this.logger.log("Redis connected successfully")
 		} catch (error) {
-			this.logger.error('Redis connection failed', error)
+			this.logger.error("Redis connection failed", error)
 			this.isEnabled = false
 		}
 	}
@@ -54,7 +54,7 @@ export class RedisService implements OnModuleInit {
 			} else {
 				await this.redis.set(key, value)
 			}
-			this.logger.debug(`Cache SET: ${key} (TTL: ${ttlSeconds || 'none'}s)`)
+			this.logger.debug(`Cache SET: ${key} (TTL: ${ttlSeconds || "none"}s)`)
 		} catch (error) {
 			this.logger.error(`Redis SET error for key ${key}:`, error)
 		}
