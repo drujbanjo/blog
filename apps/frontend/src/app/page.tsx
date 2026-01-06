@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { useMemo, useState } from "react"
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
 
 import {
 	Badge,
@@ -13,13 +13,13 @@ import {
 	CardTitle,
 	Container,
 	HomeSkeleton,
-	Input
-} from "@/components"
-import { Post, useGetPostsQuery } from "@/graphql"
+	Input,
+} from '@/components'
+import { Post, useGetPostsQuery } from '@/graphql'
 
 const Home = () => {
 	const { data, loading, error } = useGetPostsQuery()
-	const [search, setSearch] = useState("")
+	const [search, setSearch] = useState('')
 
 	const posts = useMemo(() => {
 		if (!data?.posts) return []
@@ -34,7 +34,7 @@ const Home = () => {
 	}, [data, search])
 
 	return (
-		<Container size={"lg"}>
+		<Container size={'lg'}>
 			<Input
 				value={search}
 				onChange={e => setSearch(e.target.value)}

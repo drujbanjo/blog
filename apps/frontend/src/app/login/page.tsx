@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
-import { Button, Input } from "@/components"
+import { Button, Input } from '@/components'
 
 export default function LoginPage() {
 	const router = useRouter()
 
-	const [password, setPassword] = useState("")
+	const [password, setPassword] = useState('')
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
@@ -18,11 +18,11 @@ export default function LoginPage() {
 		setError(null)
 
 		try {
-			const res = await fetch("/api/login", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
+			const res = await fetch('/api/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ password }),
-				credentials: "include"
+				credentials: 'include',
 			})
 
 			// Проверяем статус ответа
@@ -34,16 +34,16 @@ export default function LoginPage() {
 			const json = await res.json()
 
 			if (!json.ok) {
-				throw new Error("Invalid password")
+				throw new Error('Invalid password')
 			}
 
 			// Успешный логин - редирект на нужную страницу
-			router.push("/admin")
+			router.push('/admin')
 			router.refresh() // Обновляем роутер чтобы middleware сработал
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
-			console.error("Login error:", err)
-			setError(err.message || "An error occurred during login")
+			console.error('Login error:', err)
+			setError(err.message || 'An error occurred during login')
 		} finally {
 			setLoading(false)
 		}
@@ -74,7 +74,7 @@ export default function LoginPage() {
 				)}
 
 				<Button type="submit" disabled={loading} className="mt-6 w-full">
-					{loading ? "Logging in..." : "Login"}
+					{loading ? 'Logging in...' : 'Login'}
 				</Button>
 			</form>
 		</div>
